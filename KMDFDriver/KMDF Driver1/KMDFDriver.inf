@@ -1,0 +1,60 @@
+[Version]
+Signature="$WINDOWS NT$"
+Class=ActivityMonitor
+ClassGuid={b86dff51-a31e-4bac-b3cf-e8cfe75c9fc2}
+Provider=%ManufacturerName%
+CatalogFile=KMDFDriver.cat
+DriverVer=2024/09/01,0.0.0.1
+PnpLockdown=1
+
+[DestinationDirs]
+DefaultDestDir = 12
+Drivers_Dir = 12
+
+[SourceDisksNames]
+1 = %DiskName%,,,""
+
+[SourceDisksFiles]
+KMDFDriver.sys = 1,,
+
+;*****************************************
+; Default Install Section for both architectures
+;*****************************************
+
+[DefaultInstall.NTamd64]
+CopyFiles=Drivers_Dir
+AddReg=KMDFDriver_AddReg
+
+[DefaultInstall.NTx86]
+CopyFiles=Drivers_Dir
+AddReg=KMDFDriver_AddReg
+
+[DefaultInstall.NTamd64.Services]
+AddService = KMDFDriver, %SPSVCINST_ASSOCSERVICE%, KMDFDriver_Service_Inst
+
+[DefaultInstall.NTx86.Services]
+AddService = KMDFDriver, %SPSVCINST_ASSOCSERVICE%, KMDFDriver_Service_Inst
+
+[Drivers_Dir]
+KMDFDriver.sys
+
+[KMDFDriver_Service_Inst]
+DisplayName    = %KMDFDriver.SVCDESC%
+ServiceType    = 1               ; SERVICE_KERNEL_DRIVER
+StartType      = 2               ; SERVICE_DEMAND_START
+ErrorControl   = 1               ; SERVICE_ERROR_NORMAL
+ServiceBinary  = %12%\KMDFDriver.sys
+
+;***************************************
+; USB Serial Filter Registration
+;***************************************
+
+[KMDFDriver_AddReg]
+HKLM,System\CurrentControlSet\Control\Class\{4D36E978-E325-11CE-BFC1-08002BE10318},UpperFilters,0x00010008,"KMDFDriver"
+
+[Strings]
+SPSVCINST_ASSOCSERVICE=0x00000002
+ManufacturerName="Skenzzi"
+DiskName="KMDFDriver Installation Disk"
+KMDFDriver.DeviceDesc="KMDFDriver USB Serial Filter Driver"
+KMDFDriver.SVCDESC="KMDFDriver Service"
